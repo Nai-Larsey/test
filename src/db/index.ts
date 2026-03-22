@@ -1,13 +1,17 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { neonConfig, Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
 import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL;
+// Required for local development with WebSockets
+if (process.env.NODE_ENV !== 'production') {
+  neonConfig.webSocketConstructor = ws;
+}
 
-// During build time on Vercel, DATABASE_URL might be missing. 
-// We provide a fallback or skip initialization to prevent a build crash.
-const client = neon(connectionString || "postgresql://placeholder:placeholder@localhost:5432/placeholder");
+const connectionString = process.env.DATABASE_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder";
 
-export const db = drizzle(client, { schema });
+const pool = new Pool({ connectionString });
+export const db = drizzle(pool, { schema });
+
 
 
