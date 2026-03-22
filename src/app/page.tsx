@@ -3,6 +3,8 @@ import StudentRegistrationForm from "@/components/StudentRegistrationForm";
 import { db } from "@/db";
 import { students, courses } from "@/db/schema"; 
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const allStudents = await db.select().from(students);
   const allCourses = await db.select().from(courses);
